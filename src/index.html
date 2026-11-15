@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>抽屉 · LocalNotes</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <!-- 顶部自定义标题栏 -->
+    <header class="titlebar">
+      <div class="titlebar-left">
+        <span class="app-logo" aria-hidden="true"><img src="../assets/icon.svg" width="24" height="24" alt="" /></span>
+        <span class="app-title">抽屉</span>
+        <span id="saveStatus" class="save-status">已自动保存</span>
+      </div>
+
+      <div class="titlebar-actions">
+        <button id="openSearchBtn" class="search-trigger" type="button" title="全局搜索 (Ctrl+F)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.3-4.3" />
+          </svg>
+          <span>搜索分类、项目或内容...</span>
+          <kbd>Ctrl+F</kbd>
+        </button>
+
+        <button id="importBtn" class="icon-btn" type="button" title="导入备份">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" x2="12" y1="15" y2="3" />
+          </svg>
+        </button>
+
+        <button id="exportBtn" class="icon-btn" type="button" title="导出备份">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" x2="12" y1="3" y2="15" />
+          </svg>
+        </button>
+
+        <button id="themeToggleBtn" class="icon-btn" type="button" title="切换深色/浅色主题">
+          <svg id="themeIconSun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+          </svg>
+          <svg id="themeIconMoon" class="hidden" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- 三栏主工作区 -->
+    <main class="workspace">
+      <!-- 最左栏：分类 -->
+      <aside class="pane pane-categories">
+        <div class="pane-header">
+          <h2 class="pane-title">分类</h2>
+          <button id="addCategoryBtn" class="add-btn" type="button" title="新增分类">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+              <path d="M12 5v14M5 12h14" />
+            </svg>
+          </button>
+        </div>
+        <div id="categoryQuickAdd" class="quick-add hidden">
+          <input id="categoryQuickInput" type="text" placeholder="输入分类名称（回车或点击空白处保存）" maxlength="40" />
+        </div>
+        <ul id="categoryList" class="item-list" role="listbox" aria-label="分类列表"></ul>
+      </aside>
+
+      <!-- 第一列：项目 -->
+      <section class="pane pane-projects">
+        <div class="pane-header">
+          <h2 id="projectPaneTitle" class="pane-title">项目</h2>
+          <button id="addProjectBtn" class="add-btn" type="button" title="新增项目">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+              <path d="M12 5v14M5 12h14" />
+            </svg>
+          </button>
+        </div>
+        <div id="projectQuickAdd" class="quick-add hidden">
+          <input id="projectQuickInput" type="text" placeholder="输入项目名称（回车或点击空白处保存）" maxlength="60" />
+        </div>
+        <ul id="projectList" class="item-list" role="listbox" aria-label="项目列表"></ul>
+      </section>
+
+      <!-- 第二列：关联内容 -->
+      <section id="contentPane" class="pane pane-content">
+        <div id="contentHeader" class="content-header hidden">
+          <div class="content-title-wrap">
+            <h1 id="activeProjectTitle" class="content-title" title="双击可重命名项目"></h1>
+          </div>
+          <div class="content-controls">
+            <button id="addFileBtn" class="secondary-btn" type="button" title="选择或拖入本地文件（保持原路径）">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+              </svg>
+              <span>关联文件</span>
+            </button>
+            <button id="addEntryBtn" class="primary-btn" type="button">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                <path d="M12 5v14M5 12h14" />
+              </svg>
+              <span>新增条目</span>
+            </button>
+          </div>
+        </div>
+
+        <div id="contentBody" class="content-body"></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Ctrl+F 全局快速搜索弹窗 -->
+  <div id="searchModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-label="全局搜索">
+    <div class="search-dialog">
+      <div class="search-input-row">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8" />
+          <path d="m21 21-4.3-4.3" />
+        </svg>
+        <input id="searchInput" type="text" placeholder="搜索分类、项目或条目纯文本内容..." autocomplete="off" />
+        <kbd class="esc-hint">Esc</kbd>
+      </div>
+      <div id="searchResults" class="search-results"></div>
+    </div>
+  </div>
+
+  <!-- 轻量确认弹窗 -->
+  <div id="confirmModal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
+    <div class="confirm-dialog">
+      <h3 id="confirmTitle" class="confirm-title"></h3>
+      <p id="confirmMessage" class="confirm-message"></p>
+      <div class="confirm-actions">
+        <button id="confirmCancelBtn" class="btn-secondary" type="button">取消</button>
+        <button id="confirmOkBtn" class="btn-danger" type="button">确定</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 右键菜单 -->
+  <div id="contextMenu" class="context-menu hidden" role="menu">
+    <button id="ctxCopyFileBtn" class="context-item hidden" type="button">复制文件（可粘贴到微信）</button>
+    <button id="ctxOpenFolderBtn" class="context-item hidden" type="button">打开所在目录</button>
+    <button id="ctxRenameBtn" class="context-item" type="button">重命名</button>
+    <div class="context-divider"></div>
+    <button id="ctxDeleteBtn" class="context-item danger" type="button">删除</button>
+  </div>
+
+  <!-- Toast 提示 -->
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
