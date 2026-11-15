@@ -1,0 +1,20 @@
+# Private notes, linked-file records and exports
+/data/
+/LocalNotes-Data/
+**/notes-data.json*
+*-备份-*.json
+*.bak
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Installed dependencies, packaged apps and unrelated video experiments
+/node_modules/
+/dist/
+/release/
+/promo-film-gemini/
+*.log
+.DS_Store
+Thumbs.db

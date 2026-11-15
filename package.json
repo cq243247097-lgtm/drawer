@@ -1,0 +1,38 @@
+{
+  "name": "local-notes",
+  "version": "1.0.0",
+  "description": "抽屉：本地保存文字与文件入口的 Windows 三栏桌面工具",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win portable",
+    "build:dir": "electron-builder --win dir",
+    "icons": "node scripts/generate-icon.js"
+  },
+  "author": "LocalNotes",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^35.0.0",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "com.localnotes.app",
+    "productName": "抽屉",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "src/**/*",
+      "assets/**/*"
+    ],
+    "win": {
+      "icon": "assets/icon.ico",
+      "target": [
+        "portable"
+      ]
+    },
+    "artifactName": "Drawer-${version}-Windows.exe"
+  }
+}
